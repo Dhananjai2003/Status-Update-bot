@@ -7,9 +7,12 @@ intents = discord.Intents().all()
 intents.messages=True
 client = discord.Client(intents = intents)
 
+category_list=['crypto','reversing','forencis','pwn','web','pentest']
+
 @client.event
 async def on_ready():
   print('We have logged in as {0.user}'.format(client))
+
 
 @client.event
 async def on_message(message):
@@ -21,13 +24,13 @@ async def on_message(message):
 
     if message.content.startswith('!add'): #tested
         message_list=message.content.split(' ')
-        if len(message_list)==3 and message_list[-2]=='me' and message_list[-1] in ['crypto','reversing','forencis','pwn','web','pentest']:
+        if len(message_list)==3 and message_list[-2]=='me' and message_list[-1] in category_list:
             if add_members(message.author,message_list[-1]):
                 await message.channel.send(f'{message.author} Already Exist in this list')
             else:
                 await message.channel.send(f'Welcome {message.author} from {message_list[-1]}')
 
-        elif len(message_list) >= 3 and message_list[-1] in ['crypto','reversing','forencis','pwn','web','pentest'] :
+        elif len(message_list) >= 3 and message_list[-1] in category_list :
             name_new_user=''
             for i in range(1,len(message_list)-1):
                 name_new_user+=message_list[i]+' '
@@ -35,7 +38,7 @@ async def on_message(message):
             add_members(name_new_user,message_list[-1])
             await message.channel.send(f'Welcome {name_new_user} from {message_list[-1]}')
         else:
-            await message.channel.send("```Wrong Format = !add me <cat>\ncat = 'crypto','reversing','forencis','pwn','web','pentest' ```")
+            await message.channel.send(f"```Wrong Format = !add me <category>\ncategory in {category_list}```")
         # add the backend
 
 
@@ -77,7 +80,7 @@ async def on_message(message):
         else:
 
             name_list=show_pending(message_list[-1])
-            myTable = PrettyTable(["Name","Cat","Status"])
+            myTable = PrettyTable(["Name","Category","Status"])
 
             for i in name_list:
                 myTable.add_row([i[0],i[1],i[-1]])
@@ -89,10 +92,10 @@ async def on_message(message):
         message_list=message.content.split(' ')
 
         if len(message_list)<3:
-            await message.channel.send("```Worng Format = !remove <discordName#id> <cat> \ncat = 'crypto','reversing','forencis','pwn','web','pentest'```")
+            await message.channel.send(f"```Worng Format = !remove <discordName#id> <category> \ncategory in {category_list}```")
 
-        elif message_list[-1] not in ['crypto','reversing','forencis','pwn','web','pentest']:
-            await message.channel.send("```Worng Format = !remove <discordName#id> <cat> \ncat = 'crypto','reversing','forencis','pwn','web','pentest'```")
+        elif message_list[-1] not in category_list:
+            await message.channel.send(f"```Worng Format = !remove <discordName#id> <category> \ncategory in {category_list}```")
             
 
         else:
@@ -116,11 +119,11 @@ async def on_message(message):
    
 
     if message.content.startswith('!help'):
-        await message.channel.send(""" ```!update <post update in code blocks> | To post updates
+        await message.channel.send(f""" ```!update <post update in code blocks> | To post updates
 !startStatusUpdate | Will start a new round for status update
 !stop | To stop current round
-!add me <div> | To add yourself to the Status update list cat = ('crypto','reversing','forencis','pwn','web','pentest')
-!add <discord id> <div> | To add someone to the Status update list 
+!add me <category> | To add yourself to the Status update list category in {category_list}
+!add <discord id> <category> | To add someone to the Status update list 
 !remove <discord id> | To remove members for status update list
 !hello | Will say back hello```""")
 
@@ -129,4 +132,4 @@ async def on_message(message):
         
 
 
-client.run("<Insert Token Here")
+client.run("<Insert Token Here>")

@@ -41,5 +41,8 @@ Discord bot to check for status updates for CTF teams
 + `!update ```<update content>``` ` Registers Updates by user.
 + `!help` Shows the list of commands
 
+### Note:
+This bot can be used in other purposes also just slight modification to the code by changing the `category list` to the use case desired.
+
 ## Credits 
 + Dhananjai Murali - python,sqlite3 implimentation.
