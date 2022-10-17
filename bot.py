@@ -1,6 +1,5 @@
 import discord
 import datetime
-import os
 from prettytable import PrettyTable
 from sqlScript import add_members,remove_members,check_round_active,check_round_author, show_pending, start_round, stop_round, show_status,update
 
@@ -130,4 +129,4 @@ async def on_message(message):
         
 
 
-client.run("retrived")
+client.run("<Insert Token Here")
