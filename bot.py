@@ -2,7 +2,7 @@ import discord
 import datetime
 import os
 from prettytable import PrettyTable
-from sqlScrypt import add_members,remove_members,check_round_active,check_round_author, show_pending, start_round, stop_round, show_status,update
+from sqlScript import add_members,remove_members,check_round_active,check_round_author, show_pending, start_round, stop_round, show_status,update
 
 intents = discord.Intents().all()
 intents.messages=True
@@ -28,13 +28,13 @@ async def on_message(message):
             else:
                 await message.channel.send(f'Welcome {message.author} from {message_list[-1]}')
 
-        # elif len(message_list) >= 3 and message_list[-1] in ['crypto','reversing','forencis','pwn','web','pentest'] :
-        #     name_new_user=''
-        #     for i in range(1,len(message_list)-1):
-        #         name_new_user+=message_list[i]+' '
+        elif len(message_list) >= 3 and message_list[-1] in ['crypto','reversing','forencis','pwn','web','pentest'] :
+            name_new_user=''
+            for i in range(1,len(message_list)-1):
+                name_new_user+=message_list[i]+' '
             
-        #     add_members(name_new_user,message_list[-1])
-        #     await message.channel.send(f'Welcome {name_new_user} from {message_list[-1]}')
+            add_members(name_new_user,message_list[-1])
+            await message.channel.send(f'Welcome {name_new_user} from {message_list[-1]}')
         else:
             await message.channel.send("```Wrong Format = !add me <cat>\ncat = 'crypto','reversing','forencis','pwn','web','pentest' ```")
         # add the backend
@@ -43,14 +43,14 @@ async def on_message(message):
     if message.content.startswith("!startStatusUpdate"): #tested
         x = datetime.datetime.now()
         #here a new tuple should be created
-        if check_round_active()==False:#only if no rounds are running
+        if check_round_active() == False:#only if no rounds are running
             start_round(message.author)
             await message.channel.send(f'{message.author} has started status updates for {x.strftime("%x")}')
         else:
             await message.channel.send('!! A ROUND IS ALREADY ACTIVE !!')
 
     if message.content.startswith("!stop"):
-        if check_round_active()==False:#checks for the previous round
+        if check_round_active() == False:#checks for the previous round
             await message.channel.send(" No Status update round is active")
         elif check_round_author(message.author):#here there should be a validation (user started the status update == user terminating status update)
             stop_round()
@@ -104,19 +104,25 @@ async def on_message(message):
 
     if message.content.startswith('!update'):
         message_list=message.content.split('```')
+        if check_round_active():
+            if len(message_list)!=3:
+                await message.channel.send(f'Wrong Format')
 
-        if len(message_list)!=3:
-            await message.channel.send(f'Wrong Format')
-
+            else:
+                update(message.author)
+                await message.channel.send(f'{message.author} has commpleted status update!')
         else:
-            update(message.author)
-            await message.channel.send(f'{message.author} has commpleted status update!')
+            await message.channel.send(f"There is now round active now you can't post updates")
+
+   
 
     if message.content.startswith('!help'):
-        await message.channel.send(""" ```!startStatusUpdate | Will start a new round for status update
+        await message.channel.send(""" ```!update <post update in code blocks> | To post updates
+!startStatusUpdate | Will start a new round for status update
 !stop | To stop current round
-!add <name> <div> | To add members to the Status update list ('crypto','reversing','forencis','pwn','web','pentest')
-!remove <name> | To ramove members for status update list
+!add me <div> | To add yourself to the Status update list cat = ('crypto','reversing','forencis','pwn','web','pentest')
+!add <discord id> <div> | To add someone to the Status update list 
+!remove <discord id> | To remove members for status update list
 !hello | Will say back hello```""")
 
 
