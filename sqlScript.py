@@ -4,7 +4,31 @@ from unicodedata import name
 
 
 #database -> members (name text,status text,cat text,pending int)
-#log -> ('user','time','status')
+#log -> ('user' text,'time' text,'status' text)
+#categories -> ('name' text)
+
+def get_categories():
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM categories")
+    cat_list = [i[0] for i in cur.fetchall()]
+    conn.commit()
+    conn.close()
+    return cat_list
+
+def add_categories(cat_name):
+    conn = sqlite3.connect("database.db")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM categories WHERE name=?;",(str(cat_name),))
+
+    if len(cur.fetchall())==0:
+        cur.execute("INSERT INTO categories VALUES (?);", (cat_name,))
+        conn.commit()
+        conn.close()
+        return True
+    conn.commit()
+    conn.close()
+    return False
 
 def add_members(name_user,cata): #implimented
 

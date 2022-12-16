@@ -1,13 +1,13 @@
 import discord
 import datetime
 from prettytable import PrettyTable
-from sqlScript import add_members,remove_members,check_round_active,check_round_author, show_pending, start_round, stop_round, show_status,update
+from sqlScript import *
 
 intents = discord.Intents().all()
 intents.messages=True
 client = discord.Client(intents = intents)
 
-category_list=['crypto','reversing','forencis','pwn','web','pentest']
+category_list=get_categories()
 
 @client.event
 async def on_ready():
@@ -16,10 +16,23 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    global category_list
     if message.author == client.user:
         return
+
+    if message.content.startswith('!newCategory'): #to add new categories
+        message_list=message.content.split(' ')
+        if len(message_list)==2:
+            if add_categories(message_list[-1]):
+                category_list = get_categories()
+                await message.channel.send(f'{message_list[-1]} is added')
+            else:
+                await message.channel.send(f'{message_list[-1]} is already exists')
+        
+        else:
+            message.channel.send('```Wrong Format \nFormat = !newCategory <category_name>```')
     
-    if message.content.startswith('!hello'): 
+    if message.content.startswith('!hello'): # says hello back
         await message.channel.send(f'Hello {message.author}')
 
     if message.content.startswith('!add'): #tested
@@ -122,9 +135,12 @@ async def on_message(message):
         await message.channel.send(f""" ```!update <post update in code blocks> | To post updates
 !startStatusUpdate | Will start a new round for status update
 !stop | To stop current round
+!showStatus | To show pending/non-pending status updates for a round
+!showPending <minimum days pending> | To show members with certain amount of days pending
 !add me <category> | To add yourself to the Status update list category in {category_list}
 !add <discord id> <category> | To add someone to the Status update list 
 !remove <discord id> | To remove members for status update list
+!newCategory <category name> | To add new categories into the bot
 !hello | Will say back hello```""")
 
 
@@ -132,4 +148,4 @@ async def on_message(message):
         
 
 
-client.run("<Insert Token Here>")
+client.run("insert token here")
